@@ -15,7 +15,15 @@ class UserRoleModel extends Model
 {
     use HasUuids;
 
-    public const UPDATED_AT = null;
+    /**
+     * DB-002's user_roles has no created_at/updated_at columns at all —
+     * only granted_at/revoked_at (see migration). `UPDATED_AT = null` alone
+     * still leaves Eloquent's default `$timestamps = true` trying to insert
+     * created_at, which doesn't exist in the schema (caused a real
+     * "column created_at does not exist" failure in production). Disabling
+     * both via $timestamps = false is the correct fix, not just nulling one.
+     */
+    public $timestamps = false;
 
     protected $table = 'user_roles';
 
